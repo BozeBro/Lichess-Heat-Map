@@ -4,5 +4,6 @@ __pycache__/
 # Pycharm File
 .idea
 
-#Ignore chess games filesee
-# /data.pgn
+#Ignore chess games files
+data.pgn
+json_data.json
