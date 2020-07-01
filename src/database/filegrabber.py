@@ -1,4 +1,14 @@
 def file_grab(link='standard/lichess_db_standard_rated_2013-01.pgn.bz2'):
+    """
+    Gets the chess file from the database.lichess site.
+    :parameter
+    ---------
+    link
+        href link of the desired pgn file.
+    file_grab will grab the file off the site and write the file into a data.pgn file
+
+
+    """
     import requests
     import sys
     import bs4
@@ -17,9 +27,8 @@ def file_grab(link='standard/lichess_db_standard_rated_2013-01.pgn.bz2'):
     r = requests.get(url)
     r = bz2.decompress(r.content)
     soup = bs4.BeautifulSoup(r, 'lxml')
-
-    file = "data.pgn"
-    with open(file, 'w') as f:
+    FILE = "data.pgn"
+    with open(FILE, 'w') as f:
         f.write(soup.get_text())
 
 
