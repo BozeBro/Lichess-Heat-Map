@@ -1,5 +1,6 @@
 import json
 
+
 def game_search(file='data.pgn'):
     """
     Iterates through the PGN file
@@ -59,9 +60,12 @@ def write_json(squares):
 
 
 def obtain_json():
-    with open('json_data.json', 'r') as json_file:
-        data = json.load(json_file)
-    return data
+    try:
+        with open('json_data.json', 'r') as json_file:
+            data = json.load(json_file)
+        return data
+    except FileNotFoundError:
+        return {}
 
 
 if __name__ == "__main__":

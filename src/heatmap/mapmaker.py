@@ -23,7 +23,7 @@ def sort_data(data):
     return board
 
 
-def heatmap(data, rank, cbarlabel="Move Frequency", cbar_kw={}, **kwargs):
+def heatmap(data, title, ax=None, cbarlabel="Move Frequency", cbar_kw={}, **kwargs):
     """
     Creates a heatmap from numpy array, squares.
     Creates a colorbar showing how the color changes along with moves to a square
@@ -59,13 +59,14 @@ def heatmap(data, rank, cbarlabel="Move Frequency", cbar_kw={}, **kwargs):
         cbar (colorbar)
         amount (Total games)
     """
+    if not ax:
+        fig, ax = plt.subplots()
     chess_board = sort_data(data)
 
     XAXES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
     YAXES = [8, 7, 6, 5, 4, 3, 2, 1]
     # Chess notation
 
-    fig, ax = plt.subplots()
     im = ax.imshow(chess_board, **kwargs)
     # The heatmap object
 
@@ -80,11 +81,12 @@ def heatmap(data, rank, cbarlabel="Move Frequency", cbar_kw={}, **kwargs):
 
     plt.setp(ax.get_xticklabels(), rotation=0, ha="left",
              rotation_mode="anchor")
-    plt.title(f'{rank} level players')
+    plt.title(title)
+    plt.tight_layout()
     return im, cbar
 
 
-def annotation(im, crange=["white", "black"], valfmt="{x:.2f}"):
+def annotation(im, crange=["white", "black"], valfmt="{x:.1f}", **textkw):
     """
     Annotates each square of the chessboard with the percentage of times a piece moves to that square.
     Will get the percentage by chess_board[square] / number
@@ -104,15 +106,16 @@ def annotation(im, crange=["white", "black"], valfmt="{x:.2f}"):
     # Used 3/4 so it is only darker squares having white texts
     kw = dict(horizontalalignment="center",
               verticalalignment="center")
+    kw.update(textkw)
     if isinstance(valfmt, str):
         valfmt = matplotlib.ticker.StrMethodFormatter(valfmt)
 
     for i in range(numbers.shape[0]):
         for j in range(numbers.shape[1]):
             kw.update(color=crange[int(im.norm(numbers[i, j]) < threshold)])
-            text = im.axes.text(j, i, valfmt(round(numbers[i, j] / total * 100, 2)), **kw)
+            text = im.axes.text(j, i, valfmt(round(numbers[i, j] / total * 100, 1)), **kw)
             texts.append(text)
-
+    plt.tight_layout()
     return texts
 
 
