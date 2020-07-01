@@ -1,12 +1,19 @@
 import json
 
-
 def game_search(file='data.pgn'):
-    import chess.pgn
-    from collections import defaultdict, Counter
     """
+    Iterates through the PGN file
+
+    :parameter
+    ---------
+    file (optional)
+        The certain data file with the chess game data. File has to be a .PGN. Set to data.pgn
+
     cur_game acts as an iterator that iterates through the games in the pgn file
     """
+
+    import chess.pgn
+    from collections import defaultdict, Counter
 
     with open(file) as notated:
         cur_game = chess.pgn.read_game(notated)
