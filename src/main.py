@@ -5,14 +5,15 @@ import heatmap.mapmaker as mm
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from collections import Counter
-
-# file_grab()
+# To see heatmap of game variation, change the argument inside data[arg] to desired variation. e.g. data["Sicilian Defense"]
+file_grab()
 # Grab the file
-# dn.game_search()
+dn.game_search()
 # Scan through the games
 
 data = dn.obtain_json()
 games = list(data.keys())
+# print(games)
 # See all game variations
 all_games = [data["1000"], data["1500"],
              data["2000"]]
