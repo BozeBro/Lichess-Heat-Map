@@ -1,19 +1,20 @@
-def file_grab(link='standard/lichess_db_standard_rated_2014-07.pgn.bz2'):
+def file_grab(site='https://database.lichess.org/', link='standard/lichess_db_standard_rated_2014-07.pgn.bz2'):
     """
     Gets the chess file from the database.lichess site.
     :parameter
     ---------
+    SITE
+        The website
     link
-        href link of the desired pgn file.
+        href link of the desired pgn file. 
     file_grab will grab the file off the site and write the file into a data.pgn file
     """
     import requests
     import sys
     import bs4
     import bz2
-    SITE = 'https://database.lichess.org/'
     LINK = link
-
+    SITE = site
     r = requests.get(SITE)
     if not r.ok:
         sys.exit()
