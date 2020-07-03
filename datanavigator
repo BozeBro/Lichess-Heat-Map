@@ -1,0 +1,139 @@
+class Parse:
+    def __init__(self, file="../../data.pgn"):
+        from collections import defaultdict, Counter
+        self.file = file
+        self.game_data = defaultdict(Counter)
+        self.colors = defaultdict(Counter)
+        self.variations = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(Counter))))
+        self.piece_data = defaultdict(lambda: defaultdict(lambda: defaultdict(Counter)))
+        self.captured = defaultdict(int)
+    def game_search(self):
+        """
+        Iterates through the PGN file
+        cur_game acts as an iterator that iterates through the games in the pgn file
+        :return
+            squares
+        """
+        import chess.pgn
+
+        with open(self.file) as game_file:
+            cur_game = chess.pgn.read_game(game_file)
+            # Iterator to go through data file
+            # Container of each square and how many times a piece moves to that square
+            while cur_game:
+                wrank, brank = self.get_headers(cur_game)
+                number = self.get_category(wrank, brank)
+                opening = cur_game.headers["Opening"].split(":")[0].split(",")[0].split("#")[0]
+                for move in cur_game.mainline_moves():
+                    self.game_data[number][str(move)[:2]] += 1
+                    self.game_data[number][str(move)[2:4]] += 1
+                    self.game_data[opening][str(move)[2:4]] += 1
+                    self.game_data[opening][str(move)[:2]] += 1
+                    # headers is for later if I want to use data on openings
+                cur_game = chess.pgn.read_game(game_file)
+                # Go to next game
+        return self.game_data
+
+    def piece_search(self):
+        """
+        This function will help analyze piece moves. It might be a little but harder to get the desired data
+        :return:
+        """
+        import chess.pgn
+        from pgn_parser import pgn, parser
+
+        with open(self.file) as game_file:
+            cur_game = chess.pgn.read_game(game_file)
+            # read the first game
+            while cur_game:
+                # traverse through the games
+                game = parser.parse(str(cur_game.mainline_moves()),
+                                    actions=pgn.Actions())
+                # Allow me to traverse through the moves
+                wrank, brank = self.get_headers(cur_game)
+                number = self.get_elo(wrank, brank)
+                # get the player rankings
+                opening = cur_game.headers["Opening"].split(":")[0].split(",")[0].split("#")[0]
+                # Get the opening variation
+                for move in game.movetext:
+                    self.wrapper(move, number, "white", opening)
+                    self.wrapper(move, number, "black", opening)
+                    # Add piece movement to the dictionaries. Main work
+                cur_game = chess.pgn.read_game(game_file)
+                # Go to the next game
+
+    def wrapper(self, move, number, color, opening):
+        """
+        Requirement checking function. Sort of like a closure
+        :param move:
+            tells me white or black move
+        :param number:
+            Tells me the elo ranking
+        :param color:
+            a str to tell if white or black
+        :param opening:
+            Give the param to add to the opening dictionary data
+        :return:
+        """
+        if color == "white" and move.white.san:
+            self.__add_data(str(move.white.san), number, color, opening)
+        elif move.black.san:
+            self.__add_data(str(move.black.san), number, color, opening)
+
+    def __add_data(self, move, number, color, opening):
+        """
+        This is the actual function that will add the data into the
+        proper slot in the dictionary tree
+        """
+        piece = move[0]
+        if piece == "0":
+            return
+            # Too lazy to deal with castles notation
+        # Get the piece
+        square = move.strip("+#")[-2:]
+        # Remove any checks or checkmates in the text
+        self.piece_data[number][color][piece][square] += 1
+        # Piece dictionary
+        self.colors[color][square] += 1
+        # movement by color dictionary
+        self.variations[opening][number][color][piece][square] += 1
+        # Piece movement by variation dictionary
+
+    def get_headers(self, game):
+        """
+        Get the Elo of the players
+        :param game:
+        the current game we are working with
+        :return:
+            wrank white elo
+            brank black elo
+        """
+        try:
+            wrank = int(game.headers["WhiteElo"])
+        except ValueError:
+            # Handles "?" elo
+            wrank = 1500
+        try:
+            brank = int(game.headers["BlackElo"])
+        except ValueError:
+            # Handles "?" elo
+            brank = 1500
+        return wrank, brank
+
+    def get_elo(self, wrank, brank):
+        """
+        Get the average elo of the players
+        Deals with unknown ("?") elo by setting them at 1500
+        """
+        number = (wrank + brank) // 2
+        # categorize the elo into three elo brackets
+        if number >= 1500:
+            number = 1500
+        else:
+            number = 1000
+        return number
+
+
+if __name__ == "__main__":
+    test = Parse("../../data.pgn")
+    test.piece_search()
