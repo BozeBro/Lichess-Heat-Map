@@ -23,7 +23,8 @@ def sort_data(data):
     return board
 
 
-def heatmap(data, title, ax=None, cbarlabel="Move Frequency", cbar_kw={"ticks": []}, **kwargs):
+
+def heatmap(data, title="placeholder", ax=None, cbarlabel="Move Frequency", cbar_kw={"ticks": []}, **kwargs):
     """
     Creates a heatmap from numpy array, squares.
     Creates a colorbar showing how the color changes along with moves to a square
@@ -31,8 +32,10 @@ def heatmap(data, title, ax=None, cbarlabel="Move Frequency", cbar_kw={"ticks": 
     ---------------
     data
         This is the json data that is from datanavigator.py
-    rank
+    title
         This gives the general rank of players for this data
+    ax
+        Allows plot to have multiple subplots in a figure
     cbarlabel (optional)
         The label for the colobar
             Preset is Move Frequency
@@ -57,7 +60,6 @@ def heatmap(data, title, ax=None, cbarlabel="Move Frequency", cbar_kw={"ticks": 
     :return
         im(heatmap)
         cbar (colorbar)
-        amount (Total games)
     """
     if not ax:
         fig, ax = plt.subplots()
@@ -72,7 +74,7 @@ def heatmap(data, title, ax=None, cbarlabel="Move Frequency", cbar_kw={"ticks": 
 
     cbar = ax.figure.colorbar(im, **cbar_kw)
     cbar.ax.set_ylabel(cbarlabel, rotation=-90, va="bottom")
-
+    # Create the colorbar
     ax.set_xticks(np.arange(len(XAXES)))
     ax.set_yticks(np.arange(len(YAXES)))
 
@@ -83,6 +85,7 @@ def heatmap(data, title, ax=None, cbarlabel="Move Frequency", cbar_kw={"ticks": 
              rotation_mode="anchor")
     plt.title(title)
     plt.tight_layout()
+    # Stop any overlapping subplots
     return im, cbar
 
 
@@ -94,6 +97,14 @@ def annotation(im, crange=["white", "black"], valfmt="{x:.1f}", **textkw):
     -----------
     im
         The heatmap
+    crange
+        The color of the text
+            crange[0] when below a certain threshold
+            crange[1] when above a threshold
+    valfmt
+        Text formatter
+    **textkw
+        kwargs for text object
     :return:
     ----------
     texts
@@ -115,9 +126,7 @@ def annotation(im, crange=["white", "black"], valfmt="{x:.1f}", **textkw):
             kw.update(color=crange[int(im.norm(numbers[i, j]) < threshold)])
             text = im.axes.text(j, i, valfmt(round(numbers[i, j] / total * 100, 1)), **kw)
             texts.append(text)
+    # Iterate through the chess_board and add the text onto the square
     plt.tight_layout()
+    # Fit words onto the square
     return texts
-
-
-if __name__ == '__main__':
-    pass

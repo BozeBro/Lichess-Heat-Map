@@ -20,6 +20,7 @@ jf.write_json(chess.game_data, FILE)
 data = jf.obtain_json(FILE)
 games = list(data.keys())
 print(games)
+
 # See all game variations
 
 gs = gridspec.GridSpec(2, 2)
