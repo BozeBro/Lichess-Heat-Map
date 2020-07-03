@@ -23,7 +23,8 @@ def sort_data(data):
     return board
 
 
-def heatmap(data, title="placeholder", ax=None, cbarlabel="Move Frequency", cbar_kw={}, **kwargs):
+
+def heatmap(data, title="placeholder", ax=None, cbarlabel="Move Frequency", cbar_kw={"ticks": []}, **kwargs):
     """
     Creates a heatmap from numpy array, squares.
     Creates a colorbar showing how the color changes along with moves to a square
@@ -129,7 +130,3 @@ def annotation(im, crange=["white", "black"], valfmt="{x:.1f}", **textkw):
     plt.tight_layout()
     # Fit words onto the square
     return texts
-
-
-if __name__ == '__main__':
-    pass
