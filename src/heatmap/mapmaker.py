@@ -23,7 +23,7 @@ def sort_data(data):
     return board
 
 
-def heatmap(data, title, ax=None, cbarlabel="Move Frequency", cbar_kw={}, **kwargs):
+def heatmap(data, title, ax=None, cbarlabel="Move Frequency", cbar_kw={"ticks": []}, **kwargs):
     """
     Creates a heatmap from numpy array, squares.
     Creates a colorbar showing how the color changes along with moves to a square
