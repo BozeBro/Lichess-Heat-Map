@@ -2,10 +2,10 @@ import json
 from collections import Counter
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-from database.filegrabber import file_grab
-import json_handler.json_funcs as jf
-import database.gameparser.datanavigator as dn
-import heatmap.mapmaker as mm
+from filegrabber import file_grab
+import json_funcs as jf
+import datanavigator as dn
+import mapmaker as mm
 
 # file_grab()
 # Grab the file
