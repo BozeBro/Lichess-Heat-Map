@@ -1,7 +1,8 @@
 # LichessHeatMap
 This is a heatmap of Player moves between different elo rankings
   It can also create heatmaps of game variations like "Sicilian Defense
-  
+The actual site of the database can be found here https://database.lichess.org/ .
+
 # main 
 The file to run to Get the pgn file, parse it, and produce the heatmap all in one go
 # ---------
